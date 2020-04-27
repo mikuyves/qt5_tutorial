@@ -9,7 +9,7 @@ buttons, labels, windows, dialogs, progress bars 等等。
 
 ![img](https://build-system.fman.io/static/public/img/widgets.png)
 
-[此图的代码](./widgets_example.py)
+[此图的代码](a04_widgets_example.py)
 报错：
 ``````
 Traceback (most recent call last):

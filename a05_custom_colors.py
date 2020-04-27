@@ -5,9 +5,10 @@ from PyQt5.QtWidgets import QApplication, QPushButton
 
 app = QApplication([])
 app.setStyle('Fusion')
-palette = QPalette()
-palette.setColor(QPalette.ButtonText, Qt.red)
-app.setPalette(palette)
+# palette = QPalette()
+# palette.setColor(QPalette.ButtonText, Qt.red)
+# app.setPalette(palette)
+app.setStyleSheet('QPushButton { margin: 10ex; }')
 button = QPushButton('Hello World')
 button.show()
 app.exec_()
