@@ -14,6 +14,8 @@ class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
         Form.resize(400, 201)
+        Form.setMinimumSize(QtCore.QSize(400, 201))
+        Form.setMaximumSize(QtCore.QSize(400, 201))
         self.username_Label = QtWidgets.QLabel(Form)
         self.username_Label.setGeometry(QtCore.QRect(30, 50, 61, 16))
         self.username_Label.setObjectName("username_Label")
