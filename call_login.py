@@ -1,7 +1,10 @@
 import sys
 
 from PyQt5.QtWidgets import QApplication, QMainWindow, QFileDialog
+from PyQt5.QtMultimedia import QSound
 from ui_login import Ui_Form
+
+from hans2voice import hans_voice
 
 
 class MyMainForm(QMainWindow, Ui_Form):
@@ -13,6 +16,8 @@ class MyMainForm(QMainWindow, Ui_Form):
         self.password_lineEdit.returnPressed.connect(self.display)
         self.comboBox.currentTextChanged.connect(self.choose_lang)
         self.openfile_pushButton.clicked.connect(self.readfile)
+        self.chuang3bed_pushButton.clicked.connect(self.speak)
+
 
     def display(self):
         username = self.username_lineEdit.text()
@@ -33,6 +38,16 @@ class MyMainForm(QMainWindow, Ui_Form):
                                                     '/Users/maccair/',
                                                     'All Files (*);;Text Files (*.txt)')
         self.user_textBrowser.setText(file_path)
+
+    def speak(self):
+        sender = self.sender()
+        hans = sender.text()
+        if hans in hans_voice:
+            print('Yes, it is in.')
+            self.sound = QSound(f'{hans_voice.get(hans)}.wav', self)
+            self.sound.play()
+
+
 
 
 if __name__ == '__main__':
