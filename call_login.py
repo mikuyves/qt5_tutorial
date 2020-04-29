@@ -40,6 +40,7 @@ class MyMainForm(QMainWindow, Ui_Form):
         self.user_textBrowser.setText(file_path)
 
     def speak(self):
+        # 获得发送者，根据发送者的文本获得汉字，再从字典中找到汉字的发音。
         sender = self.sender()
         hans = sender.text()
         if hans in hans_voice:
