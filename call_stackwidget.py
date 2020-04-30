@@ -2,9 +2,14 @@ import sys
 
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel
 from hanziconv import HanziConv
+from PyQt5.QtCore import QObject, pyqtSignal
 
 from ui_stackwidget import Ui_MainWindow
 from poems import poems, page_id
+
+
+class Communicate(QObject):
+    click_button = pyqtSignal()
 
 
 class MyStackWidget(QMainWindow, Ui_MainWindow):
@@ -16,6 +21,19 @@ class MyStackWidget(QMainWindow, Ui_MainWindow):
         self.chs_checkBox.stateChanged.connect(self.cht2chs)
 
         self.get_poem()
+
+        # 多个按钮绑定一个 slot，常规需要每个按钮写一个 pushButton.clicked.connect(<slot>)
+        # 用 findChildren 找出所有按钮，然后 for 筛选之后绑定同一个 slot。
+        # slot 函数中，用 sender 找出这个 signal 是来自哪个 sender。
+        buttons = self.findChildren(QPushButton)
+        for btn in buttons:
+            if btn.objectName()[:2] in page_id:
+                btn.clicked.connect(self.button_click)
+
+    def button_click(self):
+        sender = self.sender()
+        btn_text = sender.text()
+        print(btn_text)
 
     def get_poem(self):
         title = self.comboBox.currentText()
