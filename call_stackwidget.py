@@ -4,7 +4,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLa
 from hanziconv import HanziConv
 
 from ui_stackwidget import Ui_MainWindow
-from poems import poems
+from poems import poems, page_id
 
 
 class MyStackWidget(QMainWindow, Ui_MainWindow):
@@ -14,19 +14,30 @@ class MyStackWidget(QMainWindow, Ui_MainWindow):
 
         self.comboBox.currentTextChanged.connect(self.get_poem)
         self.chs_checkBox.stateChanged.connect(self.cht2chs)
+
         self.get_poem()
 
     def get_poem(self):
         title = self.comboBox.currentText()
-        for k, v in poems.items():
-            if k == title:
-                self.title_label.setText(v.get('title'))
-                self.author_label.setText(v.get('author'))
-                type_id = v.get('type_id')
-                for index, char in enumerate(v.get('content'), start=1):
-                    i_str = str(index).zfill(2)  # 数字补全 0 位，使用 sting.zfill(<位>)
-                    button = self.findChild(QPushButton, f'{type_id}_{i_str}_pushButton')
-                    button.setText(char)
+        if title in poems:
+            p = poems.get(title)
+            p_title = p.get('title')
+            p_author = p.get('author')
+            p_content = p.get('content')
+            p_type_id = p.get('type_id')
+
+            self.title_label.setText(p_title)
+            self.author_label.setText(p_author)
+
+            if p_type_id == 'j5':
+                self.stackedWidget.setCurrentIndex(0)
+            if p_type_id == 'j7':
+                self.stackedWidget.setCurrentIndex(1)
+
+            for i, char in enumerate(p_content, start=1):
+                i_str = str(i).zfill(2)  # 数字补全 0 位，使用 sting.zfill(<位>)
+                button = self.findChild(QPushButton, f'{p_type_id}_{i_str}_pushButton')
+                button.setText(char)
 
     def cht2chs(self):
         if self.chs_checkBox.isChecked():
