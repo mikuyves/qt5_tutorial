@@ -6,6 +6,7 @@ from PyQt5.QtCore import QObject, pyqtSignal
 
 from ui_stackwidget import Ui_MainWindow
 from poems import poems, page_id
+from pronunciation import word_sounds, sentence_sounds
 
 
 class Communicate(QObject):
@@ -28,12 +29,39 @@ class MyStackWidget(QMainWindow, Ui_MainWindow):
         buttons = self.findChildren(QPushButton)
         for btn in buttons:
             if btn.objectName()[:2] in page_id:
-                btn.clicked.connect(self.button_click)
+                btn.clicked.connect(self.on_sound_btn_click)
 
-    def button_click(self):
+    def on_sound_btn_click(self):
+        # 監聽按鈕 signal，然後查找發音文件。
         sender = self.sender()
         btn_text = sender.text()
-        print(btn_text)
+        # 發音字典的鍵採用繁體字。
+        if self.chs_checkBox.isChecked():
+            HanziConv.toTraditional(btn_text)
+
+        # 單字發音。
+        # 在發音字典中找到發音文件的路徑。
+        if btn_text in word_sounds:
+            p = word_sounds.get(btn_text)
+            print(f'{btn_text} 發音文件：{p}.wav')
+        # 如果是標點符號，則計算它所在的「行」，然後找到句子的發音，發音文件用行數來表示。
+
+        # 句子發音。
+        elif btn_text == '，' or '。':
+            btn_name = sender.objectName()
+            _type, index, rest = btn_name.split('_')
+            # 判斷是否是句末。若是句末，則通過詩的標題，在句子發音字典中查找。
+            if int(index) % (int(_type[1]) + 1) == 0:
+                number = int(index) / (int(_type[1]) + 1)
+                title = self.comboBox.currentText()
+                try:
+                    sound = sentence_sounds.get(title)[int(number) - 1]
+                    print(f'{sound.split("-")[0]} 發音文件：{sound.split("-")[1]}')
+                except TypeError as e:
+                    print(e)
+                    print('詩句未加添到發音字典。')
+            else:
+                pass
 
     def get_poem(self):
         title = self.comboBox.currentText()
