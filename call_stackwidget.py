@@ -1,15 +1,12 @@
 import sys
+from pathlib import Path
 
 from PyQt5.QtWidgets import QApplication, QWidget, QMainWindow, QPushButton, QLabel
+from PyQt5.QtMultimedia import QSound
 from hanziconv import HanziConv
-from PyQt5.QtCore import QObject, pyqtSignal
 
 from ui_stackwidget import Ui_MainWindow
 from poems import poems, page_id
-
-
-class Communicate(QObject):
-    click_button = pyqtSignal()
 
 
 class MyStackWidget(QMainWindow, Ui_MainWindow):
@@ -36,9 +33,13 @@ class MyStackWidget(QMainWindow, Ui_MainWindow):
         sender = self.sender()
         btn_text = sender.text()
         btn_name = sender.objectName()
+        # 通過 index 找到發音文件的文件名，通過文件路徑播放。
         _type, index, rest = btn_name.split('_')
         poem_sounds = poems.get(self.poem_title).get('sounds')
-        print(f'{btn_text} 的發音是 {poem_sounds[int(index) - 1]}')
+        btn_sound_name = poem_sounds[int(index) - 1]
+        sound_path = Path('audio') / f'{btn_sound_name}.wav'
+        sound = QSound(sound_path.absolute().__str__(), self)  # QSound 不支持讀取 Path 對象。
+        sound.play()
 
     def get_poem(self):
         self.poem_title = self.comboBox.currentText()
@@ -49,6 +50,7 @@ class MyStackWidget(QMainWindow, Ui_MainWindow):
             p_content = p.get('content')
             p_type_id = p.get('type_id')
 
+            # TODO: 如果有重名的詩，poems 字典中有數字結尾，顯示標題時應該刪除。
             self.title_label.setText(p_title)
             self.author_label.setText(p_author)
 
