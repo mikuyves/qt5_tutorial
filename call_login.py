@@ -17,6 +17,7 @@ class MyMainForm(QMainWindow, Ui_Form):
         self.comboBox.currentTextChanged.connect(self.choose_lang)
         self.openfile_pushButton.clicked.connect(self.readfile)
         self.chuang3bed_pushButton.clicked.connect(self.speak)
+        self.chuang3bed_pushButton.clicked.connect(self.ch_hans)
 
 
     def display(self):
@@ -47,6 +48,9 @@ class MyMainForm(QMainWindow, Ui_Form):
             print('Yes, it is in.')
             self.sound = QSound(f'{hans_voice.get(hans)}.wav', self)
             self.sound.play()
+
+    def ch_hans(self):
+        self.chuang3bed_pushButton.setText('换')
 
 
 
