@@ -12,13 +12,12 @@ class MyStackWidget(QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
 
-        self.current_title = self.comboBox.currentText()
-        self.get_poem(self.current_title)
         self.comboBox.currentTextChanged.connect(self.get_poem)
         self.chs_checkBox.stateChanged.connect(self.cht2chs)
+        self.get_poem()
 
-    def get_poem(self, title):
-        self.current_title = title
+    def get_poem(self):
+        title = self.comboBox.currentText()
         for k, v in poems.items():
             if k == title:
                 self.title_label.setText(v.get('title'))
@@ -38,7 +37,7 @@ class MyStackWidget(QMainWindow, Ui_MainWindow):
             for lb in labels:
                 lb.setText(HanziConv.toSimplified(lb.text()))
         else:
-            self.get_poem(self.current_title)
+            self.get_poem()
 
 
 if __name__ == '__main__':
