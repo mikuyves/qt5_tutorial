@@ -6,7 +6,6 @@ from PyQt5.QtCore import QObject, pyqtSignal
 
 from ui_stackwidget import Ui_MainWindow
 from poems import poems, page_id
-from pronunciation import word_sounds, sentence_sounds
 
 
 class Communicate(QObject):
@@ -21,6 +20,7 @@ class MyStackWidget(QMainWindow, Ui_MainWindow):
         self.comboBox.currentTextChanged.connect(self.get_poem)
         self.chs_checkBox.stateChanged.connect(self.cht2chs)
 
+        self.poem_title = ''
         self.get_poem()
 
         # 多个按钮绑定一个 slot，常规需要每个按钮写一个 pushButton.clicked.connect(<slot>)
@@ -35,38 +35,15 @@ class MyStackWidget(QMainWindow, Ui_MainWindow):
         # 監聽按鈕 signal，然後查找發音文件。
         sender = self.sender()
         btn_text = sender.text()
-        # 發音字典的鍵採用繁體字。
-        if self.chs_checkBox.isChecked():
-            HanziConv.toTraditional(btn_text)
-
-        # 單字發音。
-        # 在發音字典中找到發音文件的路徑。
-        if btn_text in word_sounds:
-            p = word_sounds.get(btn_text)
-            print(f'{btn_text} 發音文件：{p}.wav')
-        # 如果是標點符號，則計算它所在的「行」，然後找到句子的發音，發音文件用行數來表示。
-
-        # 句子發音。
-        elif btn_text == '，' or '。':
-            btn_name = sender.objectName()
-            _type, index, rest = btn_name.split('_')
-            # 判斷是否是句末。若是句末，則通過詩的標題，在句子發音字典中查找。
-            if int(index) % (int(_type[1]) + 1) == 0:
-                number = int(index) / (int(_type[1]) + 1)
-                title = self.comboBox.currentText()
-                try:
-                    sound = sentence_sounds.get(title)[int(number) - 1]
-                    print(f'{sound.split("-")[0]} 發音文件：{sound.split("-")[1]}')
-                except TypeError as e:
-                    print(e)
-                    print('詩句未加添到發音字典。')
-            else:
-                pass
+        btn_name = sender.objectName()
+        _type, index, rest = btn_name.split('_')
+        poem_sounds = poems.get(self.poem_title).get('sounds')
+        print(f'{btn_text} 的發音是 {poem_sounds[int(index) - 1]}')
 
     def get_poem(self):
-        title = self.comboBox.currentText()
-        if title in poems:
-            p = poems.get(title)
+        self.poem_title = self.comboBox.currentText()
+        if self.poem_title in poems:
+            p = poems.get(self.poem_title)
             p_title = p.get('title')
             p_author = p.get('author')
             p_content = p.get('content')
